@@ -1,0 +1,937 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package GiaoDien;
+
+import com.polypro.dao.NhanVienDAO;
+import com.polypro.helper.DialogHelper;
+import com.polypro.helper.ShareHelper;
+import com.polypro.helper.UHelper;
+import com.polypro.model.NhanVien;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+
+/**
+ *
+ * @author Admin
+ */
+public class NhanVienJInternalFrame extends javax.swing.JInternalFrame {
+    int index = 0;
+    NhanVienDAO dao = new NhanVienDAO();
+
+    /**
+     * Creates new form NhanVien1JInternalFrame
+     */
+    public NhanVienJInternalFrame() {
+        initComponents();
+        init();
+    }
+    private void init() {
+        setFrameIcon(ShareHelper.APP_ICON_1);
+        tabs1.setSelectedIndex(1);
+    }
+    void load() {
+        DefaultTableModel model = (DefaultTableModel) tbl_GridView1.getModel();
+        model.setRowCount(0);
+        try {
+            List<NhanVien> list = dao.select();
+            for (NhanVien nv : list) {
+                Object[] row = {
+                    nv.getMaNV(),
+                    nv.getMatKhau(),
+                    nv.getHoTen(),
+                    nv.isVaiTro() ? "Trưởng phòng" : "Nhân viên"};
+                model.addRow(row);
+            }
+        } catch (Exception e) {
+            DialogHelper.alert(this, "Lỗi truy vấn dữ liệu");
+        }
+    }
+
+    void insert() {
+        NhanVien model = getModel();
+
+        String confirm = new String(txt_xacnhanmk1.getPassword());
+        if (confirm.equals(model.getMatKhau())) {
+            try {
+                dao.insert(model);
+                this.load();
+                this.clear();
+                DialogHelper.alert(this, "Thêm mới thành công!");
+            } catch (Exception e) {
+                DialogHelper.alert(this, "Thêm mới thất bại!");
+            }
+        } else {
+            DialogHelper.alert(this, "Xác nhận mật khẩu không đúng!");
+        }
+    }
+
+    void update() {
+        NhanVien model = getModel();
+
+        String confirm = new String(txt_xacnhanmk1.getPassword());
+        if (!confirm.equals(model.getMatKhau())) {
+            DialogHelper.alert(this, "Xác nhận mật khẩu không đúng!");
+        } else {
+            try {
+                dao.update(model);
+                this.load();
+                DialogHelper.alert(this, "Cập nhật thành công!");
+            } catch (Exception e) {
+                DialogHelper.alert(this, "Cập nhật thất bại!");
+            }
+        }
+    }
+
+    void delete() {
+        if (DialogHelper.confirm(this, "Bạn thực sự muốn xóa nhân viên này?")) {
+            String manv = txt_MaNv1.getText();
+            try {
+                dao.delete(manv);
+                this.load();
+                this.clear();
+                DialogHelper.alert(this, "Xóa thành công!");
+            } catch (Exception e) {
+                DialogHelper.alert(this, "Xóa thất bại!");
+            }
+        }
+    }
+
+    void edit() {
+        try {
+            String manv = (String) tbl_GridView1.getValueAt(this.index, 0);
+            NhanVien model = dao.findById(manv);
+            if (model != null) {
+                this.setModel(model);
+                this.setStatus(false);
+            }
+        } catch (Exception e) {
+            DialogHelper.alert(this, "Lỗi truy vấn dữ liệu!");
+        }
+    }
+
+    void clear() {
+        this.setModel(new NhanVien());
+        this.setStatus(true);
+    }
+
+    void setModel(NhanVien model) {
+        txt_MaNv1.setText(model.getMaNV());
+        txt_hoten1.setText(model.getHoTen());
+        txt_matkhau1.setText(model.getMatKhau());
+        txt_xacnhanmk1.setText(model.getMatKhau());
+        rdo_truongphong1.setSelected(model.isVaiTro());
+        rdo_nhanvien1.setSelected(!model.isVaiTro());
+    }
+
+    NhanVien getModel() {
+        NhanVien model = new NhanVien();
+        model.setMaNV(txt_MaNv1.getText());
+        model.setHoTen(txt_hoten1.getText());
+        model.setMatKhau(new String(txt_matkhau1.getPassword()));
+        model.setVaiTro(rdo_truongphong1.isSelected());
+        return model;
+    }
+
+    void setStatus(boolean insertable) {
+        txt_MaNv1.setEditable(insertable);
+        btn_insert1.setEnabled(insertable);
+        btn_update1.setEnabled(!insertable);
+        btn_delete1.setEnabled(!insertable);
+
+        boolean first = this.index > 0;
+        boolean last = this.index < tbl_GridView1.getRowCount() - 1;
+        btn_first1.setEnabled(!insertable && first);
+        btn_prev1.setEnabled(!insertable && first);
+        btn_next1.setEnabled(!insertable && last);
+        btn_last1.setEnabled(!insertable && last);
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        buttonGroup1 = new javax.swing.ButtonGroup();
+        jInternalFrame1 = new javax.swing.JInternalFrame();
+        lbl_title = new javax.swing.JLabel();
+        tabs = new javax.swing.JTabbedPane();
+        pnl_edit = new javax.swing.JPanel();
+        lbl_MaNv = new javax.swing.JLabel();
+        txt_MaNv = new javax.swing.JTextField();
+        lbl_matkhau = new javax.swing.JLabel();
+        txt_matkhau = new javax.swing.JPasswordField();
+        lbl_xacnhanmk = new javax.swing.JLabel();
+        txt_xacnhanmk = new javax.swing.JPasswordField();
+        lbl_hoten = new javax.swing.JLabel();
+        txt_hoten = new javax.swing.JTextField();
+        lbl_vaitro = new javax.swing.JLabel();
+        rdo_truongphong = new javax.swing.JRadioButton();
+        rdo_nhanvien = new javax.swing.JRadioButton();
+        btn_insert = new javax.swing.JButton();
+        btn_update = new javax.swing.JButton();
+        btn_delete = new javax.swing.JButton();
+        btn_clear = new javax.swing.JButton();
+        btn_last = new javax.swing.JButton();
+        btn_next = new javax.swing.JButton();
+        btn_prev = new javax.swing.JButton();
+        btn_first = new javax.swing.JButton();
+        pnl_list = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tbl_GridView = new javax.swing.JTable();
+        tabs1 = new javax.swing.JTabbedPane();
+        pnl_edit1 = new javax.swing.JPanel();
+        lbl_MaNv1 = new javax.swing.JLabel();
+        txt_MaNv1 = new javax.swing.JTextField();
+        lbl_matkhau1 = new javax.swing.JLabel();
+        txt_matkhau1 = new javax.swing.JPasswordField();
+        lbl_xacnhanmk1 = new javax.swing.JLabel();
+        txt_xacnhanmk1 = new javax.swing.JPasswordField();
+        lbl_hoten1 = new javax.swing.JLabel();
+        txt_hoten1 = new javax.swing.JTextField();
+        lbl_vaitro1 = new javax.swing.JLabel();
+        rdo_truongphong1 = new javax.swing.JRadioButton();
+        rdo_nhanvien1 = new javax.swing.JRadioButton();
+        btn_insert1 = new javax.swing.JButton();
+        btn_update1 = new javax.swing.JButton();
+        btn_delete1 = new javax.swing.JButton();
+        btn_clear1 = new javax.swing.JButton();
+        btn_last1 = new javax.swing.JButton();
+        btn_next1 = new javax.swing.JButton();
+        btn_prev1 = new javax.swing.JButton();
+        btn_first1 = new javax.swing.JButton();
+        pnl_list1 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tbl_GridView1 = new javax.swing.JTable();
+        lbl_title1 = new javax.swing.JLabel();
+
+        setClosable(true);
+        addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
+                formInternalFrameOpened(evt);
+            }
+        });
+
+        jInternalFrame1.setClosable(true);
+        jInternalFrame1.addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
+            public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosed(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameClosing(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeactivated(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameDeiconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameIconified(javax.swing.event.InternalFrameEvent evt) {
+            }
+            public void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {
+                jInternalFrame1formInternalFrameOpened(evt);
+            }
+        });
+
+        lbl_title.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lbl_title.setForeground(new java.awt.Color(0, 0, 204));
+        lbl_title.setText("QUẢN LÝ NHÂN VIÊN QUẢN TRỊ ");
+
+        lbl_MaNv.setText("Mã nhân viên");
+
+        lbl_matkhau.setText("Mật khẩu");
+
+        lbl_xacnhanmk.setText("Xác nhận mật khẩu");
+
+        lbl_hoten.setText("Họ và tên");
+
+        lbl_vaitro.setText("Vai trò");
+
+        rdo_truongphong.setSelected(true);
+        rdo_truongphong.setText("Trưởng phòng");
+
+        rdo_nhanvien.setText("Nhân viên");
+
+        btn_insert.setText("Thêm");
+        btn_insert.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_insertActionPerformed(evt);
+            }
+        });
+
+        btn_update.setText("Sửa");
+        btn_update.setEnabled(false);
+        btn_update.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_updateActionPerformed(evt);
+            }
+        });
+
+        btn_delete.setText("Xóa");
+        btn_delete.setEnabled(false);
+        btn_delete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_deleteActionPerformed(evt);
+            }
+        });
+
+        btn_clear.setText("Mới");
+        btn_clear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_clearActionPerformed(evt);
+            }
+        });
+
+        btn_last.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/66615753_1056307041245136_3788192370894307328_n.png"))); // NOI18N
+        btn_last.setEnabled(false);
+        btn_last.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_lastActionPerformed(evt);
+            }
+        });
+
+        btn_next.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/66187495_2636402163253001_1471257866336731136_n.png"))); // NOI18N
+        btn_next.setEnabled(false);
+        btn_next.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_nextActionPerformed(evt);
+            }
+        });
+
+        btn_prev.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/66594471_389332521931713_4328421582247559168_n.png"))); // NOI18N
+        btn_prev.setEnabled(false);
+        btn_prev.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_prevActionPerformed(evt);
+            }
+        });
+
+        btn_first.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/66335151_503799670374146_4836948570542178304_n.png"))); // NOI18N
+        btn_first.setEnabled(false);
+        btn_first.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_firstActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnl_editLayout = new javax.swing.GroupLayout(pnl_edit);
+        pnl_edit.setLayout(pnl_editLayout);
+        pnl_editLayout.setHorizontalGroup(
+            pnl_editLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnl_editLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnl_editLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txt_MaNv)
+                    .addComponent(txt_matkhau)
+                    .addComponent(txt_xacnhanmk)
+                    .addComponent(txt_hoten)
+                    .addGroup(pnl_editLayout.createSequentialGroup()
+                        .addGroup(pnl_editLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbl_MaNv)
+                            .addComponent(lbl_matkhau)
+                            .addComponent(lbl_xacnhanmk)
+                            .addComponent(lbl_hoten)
+                            .addComponent(lbl_vaitro)
+                            .addGroup(pnl_editLayout.createSequentialGroup()
+                                .addComponent(rdo_truongphong)
+                                .addGap(29, 29, 29)
+                                .addComponent(rdo_nhanvien)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(pnl_editLayout.createSequentialGroup()
+                        .addComponent(btn_insert)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_update)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_delete)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_clear)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btn_first)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_prev)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_next)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_last)))
+                .addContainerGap())
+        );
+        pnl_editLayout.setVerticalGroup(
+            pnl_editLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnl_editLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lbl_MaNv)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_MaNv, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbl_matkhau)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_matkhau, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbl_xacnhanmk)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_xacnhanmk, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbl_hoten)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_hoten, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbl_vaitro)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnl_editLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(rdo_truongphong)
+                    .addComponent(rdo_nhanvien))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnl_editLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_insert)
+                    .addComponent(btn_update)
+                    .addComponent(btn_delete)
+                    .addComponent(btn_clear)
+                    .addComponent(btn_last)
+                    .addComponent(btn_next)
+                    .addComponent(btn_prev)
+                    .addComponent(btn_first))
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        tabs.addTab("CẬP NHẬT", pnl_edit);
+
+        tbl_GridView.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "MÃ NV", "MẬT KHẨU", "HỌ VÀ TÊN", "VAI TRÒ"
+            }
+        ));
+        tbl_GridView.setRowHeight(25);
+        tbl_GridView.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_GridViewMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(tbl_GridView);
+
+        javax.swing.GroupLayout pnl_listLayout = new javax.swing.GroupLayout(pnl_list);
+        pnl_list.setLayout(pnl_listLayout);
+        pnl_listLayout.setHorizontalGroup(
+            pnl_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnl_listLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        pnl_listLayout.setVerticalGroup(
+            pnl_listLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnl_listLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        tabs.addTab("DANH SÁCH", pnl_list);
+
+        javax.swing.GroupLayout jInternalFrame1Layout = new javax.swing.GroupLayout(jInternalFrame1.getContentPane());
+        jInternalFrame1.getContentPane().setLayout(jInternalFrame1Layout);
+        jInternalFrame1Layout.setHorizontalGroup(
+            jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jInternalFrame1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jInternalFrame1Layout.createSequentialGroup()
+                        .addComponent(lbl_title)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(tabs))
+                .addContainerGap())
+        );
+        jInternalFrame1Layout.setVerticalGroup(
+            jInternalFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jInternalFrame1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lbl_title)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tabs)
+                .addContainerGap())
+        );
+
+        lbl_MaNv1.setText("Mã nhân viên");
+
+        lbl_matkhau1.setText("Mật khẩu");
+
+        lbl_xacnhanmk1.setText("Xác nhận mật khẩu");
+
+        lbl_hoten1.setText("Họ và tên");
+
+        lbl_vaitro1.setText("Vai trò");
+
+        buttonGroup1.add(rdo_truongphong1);
+        rdo_truongphong1.setSelected(true);
+        rdo_truongphong1.setText("Trưởng phòng");
+
+        buttonGroup1.add(rdo_nhanvien1);
+        rdo_nhanvien1.setText("Nhân viên");
+
+        btn_insert1.setText("Thêm");
+        btn_insert1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_insert1ActionPerformed(evt);
+            }
+        });
+
+        btn_update1.setText("Sửa");
+        btn_update1.setEnabled(false);
+        btn_update1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_update1ActionPerformed(evt);
+            }
+        });
+
+        btn_delete1.setText("Xóa");
+        btn_delete1.setEnabled(false);
+        btn_delete1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_delete1ActionPerformed(evt);
+            }
+        });
+
+        btn_clear1.setText("Mới");
+        btn_clear1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_clear1ActionPerformed(evt);
+            }
+        });
+
+        btn_last1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/66615753_1056307041245136_3788192370894307328_n.png"))); // NOI18N
+        btn_last1.setEnabled(false);
+        btn_last1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_last1ActionPerformed(evt);
+            }
+        });
+
+        btn_next1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/66187495_2636402163253001_1471257866336731136_n.png"))); // NOI18N
+        btn_next1.setEnabled(false);
+        btn_next1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_next1ActionPerformed(evt);
+            }
+        });
+
+        btn_prev1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/66594471_389332521931713_4328421582247559168_n.png"))); // NOI18N
+        btn_prev1.setEnabled(false);
+        btn_prev1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_prev1ActionPerformed(evt);
+            }
+        });
+
+        btn_first1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icon/66335151_503799670374146_4836948570542178304_n.png"))); // NOI18N
+        btn_first1.setEnabled(false);
+        btn_first1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_first1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout pnl_edit1Layout = new javax.swing.GroupLayout(pnl_edit1);
+        pnl_edit1.setLayout(pnl_edit1Layout);
+        pnl_edit1Layout.setHorizontalGroup(
+            pnl_edit1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnl_edit1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnl_edit1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txt_MaNv1)
+                    .addComponent(txt_matkhau1)
+                    .addComponent(txt_xacnhanmk1)
+                    .addComponent(txt_hoten1)
+                    .addGroup(pnl_edit1Layout.createSequentialGroup()
+                        .addGroup(pnl_edit1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(lbl_MaNv1)
+                            .addComponent(lbl_matkhau1)
+                            .addComponent(lbl_xacnhanmk1)
+                            .addComponent(lbl_hoten1)
+                            .addComponent(lbl_vaitro1)
+                            .addGroup(pnl_edit1Layout.createSequentialGroup()
+                                .addComponent(rdo_truongphong1)
+                                .addGap(29, 29, 29)
+                                .addComponent(rdo_nhanvien1)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(pnl_edit1Layout.createSequentialGroup()
+                        .addComponent(btn_insert1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_update1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_delete1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_clear1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btn_first1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_prev1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_next1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btn_last1)))
+                .addContainerGap())
+        );
+        pnl_edit1Layout.setVerticalGroup(
+            pnl_edit1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnl_edit1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lbl_MaNv1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_MaNv1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbl_matkhau1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_matkhau1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbl_xacnhanmk1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_xacnhanmk1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbl_hoten1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txt_hoten1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lbl_vaitro1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(pnl_edit1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(rdo_truongphong1)
+                    .addComponent(rdo_nhanvien1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnl_edit1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btn_insert1)
+                    .addComponent(btn_update1)
+                    .addComponent(btn_delete1)
+                    .addComponent(btn_clear1)
+                    .addComponent(btn_last1)
+                    .addComponent(btn_next1)
+                    .addComponent(btn_prev1)
+                    .addComponent(btn_first1))
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        tabs1.addTab("CẬP NHẬT", pnl_edit1);
+
+        tbl_GridView1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "MÃ NV", "MẬT KHẨU", "HỌ VÀ TÊN", "VAI TRÒ"
+            }
+        ));
+        tbl_GridView1.setRowHeight(25);
+        tbl_GridView1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_GridView1MouseClicked(evt);
+            }
+        });
+        jScrollPane2.setViewportView(tbl_GridView1);
+
+        javax.swing.GroupLayout pnl_list1Layout = new javax.swing.GroupLayout(pnl_list1);
+        pnl_list1.setLayout(pnl_list1Layout);
+        pnl_list1Layout.setHorizontalGroup(
+            pnl_list1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnl_list1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 448, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        pnl_list1Layout.setVerticalGroup(
+            pnl_list1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnl_list1Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 244, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        tabs1.addTab("DANH SÁCH", pnl_list1);
+
+        lbl_title1.setFont(new java.awt.Font("Tahoma", 1, 14)); // NOI18N
+        lbl_title1.setForeground(new java.awt.Color(0, 0, 204));
+        lbl_title1.setText("QUẢN LÝ NHÂN VIÊN QUẢN TRỊ ");
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 493, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jInternalFrame1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(lbl_title1)
+                            .addGap(0, 0, Short.MAX_VALUE))
+                        .addComponent(tabs1))
+                    .addContainerGap()))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 339, Short.MAX_VALUE)
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addGap(0, 0, Short.MAX_VALUE)
+                    .addComponent(jInternalFrame1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGap(0, 0, Short.MAX_VALUE)))
+            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addContainerGap()
+                    .addComponent(lbl_title1)
+                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(tabs1)
+                    .addContainerGap()))
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btn_insertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_insertActionPerformed
+        // TODO add your handling code here:
+        if(!UHelper.checkNull_JTextField(txt_MaNv1, "Mã NV")){
+            return;
+        }
+        if(!UHelper.checkTrungMaNV_JTextField(txt_MaNv1)){
+            return;
+        }
+        if(!UHelper.checkNull_JPasswordField(txt_matkhau1, "Mật khẩu ")){
+            return;
+        }
+        if(!UHelper.checkSizeMKNV_JPasswordField(txt_matkhau1, "Mật khẩu ")){
+            return;
+        }
+        if(!UHelper.checkNull_JPasswordField(txt_xacnhanmk1, "Xác nhận mật khẩu ")){
+            return;
+        }
+        if(!UHelper.checkNull_JTextField(txt_hoten1, "Họ tên ")){
+            return;
+        }
+        if(!UHelper.checkHoTen_JTextField(txt_hoten1)){
+            return;
+        }
+           this.insert();
+    }//GEN-LAST:event_btn_insertActionPerformed
+
+    private void btn_updateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_updateActionPerformed
+        // TODO add your handling code here:
+        this.update();
+    }//GEN-LAST:event_btn_updateActionPerformed
+
+    private void btn_deleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_deleteActionPerformed
+        // TODO add your handling code here:
+        this.delete();
+    }//GEN-LAST:event_btn_deleteActionPerformed
+
+    private void btn_clearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_clearActionPerformed
+        // TODO add your handling code here:
+        this.clear();
+    }//GEN-LAST:event_btn_clearActionPerformed
+
+    private void btn_lastActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_lastActionPerformed
+        // TODO add your handling code here:
+        this.index = tbl_GridView1.getRowCount() - 1;
+        this.edit();
+    }//GEN-LAST:event_btn_lastActionPerformed
+
+    private void btn_nextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_nextActionPerformed
+        // TODO add your handling code here:
+        this.index++;
+        this.edit();
+    }//GEN-LAST:event_btn_nextActionPerformed
+
+    private void btn_prevActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_prevActionPerformed
+        // TODO add your handling code here:
+        this.index--;
+        this.edit();
+    }//GEN-LAST:event_btn_prevActionPerformed
+
+    private void btn_firstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_firstActionPerformed
+        // TODO add your handling code here:
+        this.index = 0;
+        this.edit();
+    }//GEN-LAST:event_btn_firstActionPerformed
+
+    private void tbl_GridViewMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_GridViewMouseClicked
+        // TODO add your handling code here:
+        if (evt.getClickCount() == 2) {
+            this.index = tbl_GridView1.rowAtPoint(evt.getPoint());
+            if (this.index >= 0) {
+                this.edit();
+                tabs.setSelectedIndex(2);
+            }
+        }
+    }//GEN-LAST:event_tbl_GridViewMouseClicked
+
+    private void jInternalFrame1formInternalFrameOpened(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_jInternalFrame1formInternalFrameOpened
+        // TODO add your handling code here:
+        this.load();
+        this.setStatus(true);
+    }//GEN-LAST:event_jInternalFrame1formInternalFrameOpened
+
+    private void btn_insert1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_insert1ActionPerformed
+        // TODO add your handling code here:
+        if(!UHelper.checkNull_JTextField(txt_MaNv1, "Mã NV")){
+            return;
+        }
+        if(!UHelper.checkNull_JPasswordField(txt_matkhau1, "Mật khẩu ")){
+            return;
+        }
+        if(!UHelper.checkNull_JPasswordField(txt_xacnhanmk1, "Xác nhận mật khẩu ")){
+            return;
+        }
+        if(!UHelper.checkNull_JTextField(txt_hoten1, "Họ tên ")){
+            return;
+        }
+        if(!UHelper.checkTrungMaNV_JTextField(txt_MaNv1)){
+            return;
+        }
+        if(!UHelper.checkSizeMKNV_JPasswordField(txt_matkhau1, "Mật khẩu ")){
+            return;
+        }
+        if(!UHelper.checkHoTen_JTextField(txt_hoten1)){
+            return;
+        }
+        this.insert();
+    }//GEN-LAST:event_btn_insert1ActionPerformed
+
+    private void btn_update1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_update1ActionPerformed
+        // TODO add your handling code here:
+        this.update();
+    }//GEN-LAST:event_btn_update1ActionPerformed
+
+    private void btn_delete1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_delete1ActionPerformed
+        // TODO add your handling code here:
+        this.delete();
+    }//GEN-LAST:event_btn_delete1ActionPerformed
+
+    private void btn_clear1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_clear1ActionPerformed
+        // TODO add your handling code here:
+        this.clear();
+    }//GEN-LAST:event_btn_clear1ActionPerformed
+
+    private void btn_last1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_last1ActionPerformed
+        // TODO add your handling code here:
+        this.index = tbl_GridView1.getRowCount() - 1;
+        this.edit();
+    }//GEN-LAST:event_btn_last1ActionPerformed
+
+    private void btn_next1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_next1ActionPerformed
+        // TODO add your handling code here:
+        this.index++;
+        this.edit();
+    }//GEN-LAST:event_btn_next1ActionPerformed
+
+    private void btn_prev1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_prev1ActionPerformed
+        // TODO add your handling code here:
+        this.index--;
+        this.edit();
+    }//GEN-LAST:event_btn_prev1ActionPerformed
+
+    private void btn_first1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_first1ActionPerformed
+        // TODO add your handling code here:
+        this.index = 0;
+        this.edit();
+    }//GEN-LAST:event_btn_first1ActionPerformed
+
+    private void tbl_GridView1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_GridView1MouseClicked
+        // TODO add your handling code here:
+        
+        if (evt.getClickCount() == 2) {
+            this.index = tbl_GridView1.rowAtPoint(evt.getPoint());
+            if (this.index >= 0) {
+                this.edit();
+                tabs1.setSelectedIndex(0);
+            }
+        }
+    }//GEN-LAST:event_tbl_GridView1MouseClicked
+
+    private void formInternalFrameOpened(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameOpened
+        // TODO add your handling code here:
+        this.load();
+        this.setStatus(true);
+    }//GEN-LAST:event_formInternalFrameOpened
+
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btn_clear;
+    private javax.swing.JButton btn_clear1;
+    private javax.swing.JButton btn_delete;
+    private javax.swing.JButton btn_delete1;
+    private javax.swing.JButton btn_first;
+    private javax.swing.JButton btn_first1;
+    private javax.swing.JButton btn_insert;
+    private javax.swing.JButton btn_insert1;
+    private javax.swing.JButton btn_last;
+    private javax.swing.JButton btn_last1;
+    private javax.swing.JButton btn_next;
+    private javax.swing.JButton btn_next1;
+    private javax.swing.JButton btn_prev;
+    private javax.swing.JButton btn_prev1;
+    private javax.swing.JButton btn_update;
+    private javax.swing.JButton btn_update1;
+    private javax.swing.ButtonGroup buttonGroup1;
+    private javax.swing.JInternalFrame jInternalFrame1;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lbl_MaNv;
+    private javax.swing.JLabel lbl_MaNv1;
+    private javax.swing.JLabel lbl_hoten;
+    private javax.swing.JLabel lbl_hoten1;
+    private javax.swing.JLabel lbl_matkhau;
+    private javax.swing.JLabel lbl_matkhau1;
+    private javax.swing.JLabel lbl_title;
+    private javax.swing.JLabel lbl_title1;
+    private javax.swing.JLabel lbl_vaitro;
+    private javax.swing.JLabel lbl_vaitro1;
+    private javax.swing.JLabel lbl_xacnhanmk;
+    private javax.swing.JLabel lbl_xacnhanmk1;
+    private javax.swing.JPanel pnl_edit;
+    private javax.swing.JPanel pnl_edit1;
+    private javax.swing.JPanel pnl_list;
+    private javax.swing.JPanel pnl_list1;
+    private javax.swing.JRadioButton rdo_nhanvien;
+    private javax.swing.JRadioButton rdo_nhanvien1;
+    private javax.swing.JRadioButton rdo_truongphong;
+    private javax.swing.JRadioButton rdo_truongphong1;
+    private javax.swing.JTabbedPane tabs;
+    private javax.swing.JTabbedPane tabs1;
+    private javax.swing.JTable tbl_GridView;
+    private javax.swing.JTable tbl_GridView1;
+    private javax.swing.JTextField txt_MaNv;
+    private javax.swing.JTextField txt_MaNv1;
+    private javax.swing.JTextField txt_hoten;
+    private javax.swing.JTextField txt_hoten1;
+    private javax.swing.JPasswordField txt_matkhau;
+    private javax.swing.JPasswordField txt_matkhau1;
+    private javax.swing.JPasswordField txt_xacnhanmk;
+    private javax.swing.JPasswordField txt_xacnhanmk1;
+    // End of variables declaration//GEN-END:variables
+}
